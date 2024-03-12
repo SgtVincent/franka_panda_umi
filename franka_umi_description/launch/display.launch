@@ -1,0 +1,25 @@
+<launch>
+  <arg name="robot" default="panda" doc="choose your robot. Possible values: [panda, fr3]"/>
+  <arg name="load_gripper" default="true" />
+
+  <rosparam>
+    joint_state_publisher_gui:
+      zeros:
+        panda_joint1: 0
+        panda_joint2: -0.785398163
+        panda_joint3: 0
+        panda_joint4: -2.35619449
+        panda_joint5: 0
+        panda_joint6: 1.57079632679
+        panda_joint7: 0.785398163397
+        panda_finger_joint1: 0.001
+        panda_finger_joint2: 0.001
+  </rosparam>
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find franka_umi_description)/robots/$(arg robot)/$(arg robot).urdf.xacro arm_id:=panda hand:=$(arg load_gripper)" />
+  <!-- <param name="robot_description" command="$(find xacro)/xacro $(find franka_description)/robots/$(arg robot)/$(arg robot).urdf.xacro arm_id:=panda hand:=$(arg load_gripper)" /> -->
+
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find franka_umi_description)/config/visualization.rviz" />
+</launch>

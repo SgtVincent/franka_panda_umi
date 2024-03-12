@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: franka_umi_description
+    relative_path: robots/panda/panda.urdf.xacro
+    xacro_args: arm_id:=panda hand:=true gazebo:=true
+  SRDF:
+    relative_path: config/panda.srdf
+  CONFIG:
+    author_name: Junting Chen
+    author_email: sgt79911030@gmail.com
+    generated_timestamp: 1710165037

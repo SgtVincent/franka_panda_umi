@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by sw_robots_exporter and modified to support moveit configs -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand">
+
+  <xacro:macro name="umi_hand" params="connected_to:='' arm_id:='panda' rpy:='0 0 0' xyz:='0 0 0' tcp_xyz:='0 0 0.1034' tcp_rpy:='0 0 0' safety_distance:=0 gazebo:=false description_pkg:=franka_umi_description">
+
+    <!-- TODO: modify the self collision links according to UMI hand -->
+    <link name="${arm_id}_hand">
+      <inertial>
+        <origin xyz="0.0801504302211646 -0.0176227363520174 -0.0209454848540739" rpy="0 0 0" />
+        <mass value="0.332671345564193" />
+        <inertia ixx="0.000198701904090043" ixy="1.38105188630204E-06" ixz="2.13754633232056E-07" iyy="0.000946734090882416" iyz="1.13002732924386E-05" izz="0.000852775670175724" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://franka_umi_description/meshes/hand.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://franka_umi_description/meshes/hand.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <xacro:unless value="${connected_to == ''}">
+      <joint name="${arm_id}_hand_joint" type="fixed">
+        <parent link="${connected_to}" />
+        <child link="${arm_id}_hand" />
+        <origin xyz="${xyz}" rpy="${rpy}" />
+      </joint>
+    </xacro:unless>
+
+    <!-- sub-link defining coarse geometries of real robot's internal self-collision -->
+    <!-- NOTE: copied directly from umi_hand.xacro -->
+    <link name="${arm_id}_hand_sc">
+      <xacro:unless value="${gazebo}">
+        <xacro:collision_capsule xyz="0 0 0.04" direction="y" radius="${0.04+safety_distance}" length="0.1" />
+        <xacro:collision_capsule xyz="0 0 0.10" direction="y" radius="${0.02+safety_distance}" length="0.1" />
+      </xacro:unless>
+    </link>
+    <!-- fixed joint between both sub-links -->
+    <joint name="${arm_id}_hand_sc_joint" type="fixed">
+      <origin rpy="${rpy}" />
+      <parent link="${arm_id}_hand" />
+      <child link="${arm_id}_hand_sc" />
+    </joint>
+
+    <link name="${arm_id}_hand_tcp" />
+    <joint name="${arm_id}_hand_tcp_joint" type="fixed">
+      <origin xyz="${tcp_xyz}" rpy="${tcp_rpy}" />
+      <parent link="${arm_id}_hand" />
+      <child link="${arm_id}_hand_tcp" />
+    </joint>
+    <link name="${arm_id}_leftfinger">
+      <inertial>
+        <origin xyz="0.0195790326498361 -0.0151262941463458 -0.0185826998205084" rpy="0 0 0" />
+        <mass value="0.0999360134260957" />
+        <inertia ixx="7.33355615454425E-05" ixy="1.57141718976586E-07" ixz="-6.125561496006E-06" iyy="7.4014609441136E-05" iyz="1.12293945878702E-06" izz="2.14963456282857E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://franka_umi_description/meshes/left_finger.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://franka_umi_description/meshes/left_finger.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${arm_id}_finger_joint1" type="prismatic">
+      <origin xyz="0.080718 -0.04683 -0.0275" rpy="-1.5708 0 0" />
+      <parent link="${arm_id}_hand" />
+      <child link="${arm_id}_leftfinger" />
+      <limit lower="0" upper="0.04" effort="100" velocity="0.2" />
+      <axis xyz="1 0 0" />
+    </joint>
+    <link name="${arm_id}_rightfinger">
+      <inertial>
+        <origin xyz="0.0204209678821434 -0.0123732546727465 0.065412704879202" rpy="0 0 0" />
+        <mass value="0.0999360018038504" />
+        <inertia ixx="7.33355387023087E-05" ixy="1.57144825705345E-07" ixz="-6.12557532456512E-06" iyy="7.40145687594871E-05" iyz="1.12294882689678E-06" izz="2.14963496610289E-05" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://franka_umi_description/meshes/right_finger.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://franka_umi_description/meshes/right_finger.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${arm_id}_finger_joint2" type="prismatic">
+      <origin xyz="0.040282 0 0" rpy="1.5708 0 0" />
+      <parent link="${arm_id}_hand" />
+      <child link="${arm_id}_rightfinger" />
+      <axis xyz="-1 0 0" />
+      <limit lower="0" upper="0.04" effort="100" velocity="0.2" />
+    </joint>
+
+  </xacro:macro>  
+</robot>
